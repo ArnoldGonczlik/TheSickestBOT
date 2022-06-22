@@ -2,7 +2,7 @@
 
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from twitchio.ext import commands, routines
 from lxml import html
@@ -42,20 +42,26 @@ async def ping(ctx):
 
 @routines.routine(minutes=5)
 async def getValues():
+    global traderTuples
     traderTuples = getTupleListOfTrader()
+    global startTime
     startTime = time.time()
 
 
 @bot.command(name='traders')
 async def test(ctx, trader=None):
-    if trader != None:
+    global traderTuples
+    if trader:
         for item in traderTuples:
             if item[0] == trader.lower():
-                await ctx.send(f'{item[0].capitalize()}: {item[1]}')
-
-    if trader == None:
+                traderName = item[0].capitalize()
+                traderTimer = traderTimeReCalculate(item[1])
+                await ctx.send(f'{traderName}: {traderTimer}')
+    else:
         for item in traderTuples:
-            await ctx.send(f'{item[0]}: {item[1]}')
+            traderName = item[0].capitalize()
+            traderTimer = traderTimeReCalculate(item[1])
+            await ctx.send(f'{traderName}: {traderTimer}')
 
     traderTuples = getTupleListOfTrader()
 
@@ -69,18 +75,22 @@ async def help(ctx):
 
 def traderTimeReCalculate(traderTime):
     if traderTime.lower() == 'right now':
-        return 'Right Now'
+        return traderTime.capitalize()
 
-    times = traderTime
-    timesDateTimeObj = datetime.strptime(times, '%H:%M:%S')
-    traderTimeInDateTime = timesDateTimeObj + timedelta(days=25567)
-    traderTimeInEpoch = time.mktime(datetime.timetuple(traderTimeInDateTime))
+    traderTimeHours = int(traderTime.split(":")[0] )
+    traderTimeMinutes = int(traderTime.split(":")[1] )
+    traderTimeSeconds = int(traderTime.split(":")[2] )
+    traderTimeSecondsTotal = int((traderTimeHours * 60 * 60) + (traderTimeMinutes * 60) + traderTimeSeconds)
 
-    end = time.time()
-    diff = end - startTime
-    updatedDateTimeObj = datetime.fromtimestamp(traderTimeInEpoch - diff)
+    currentTime = time.time()
+    global startTime
+    diffTime = currentTime - startTime
+    startTime = time.time()
 
-    return datetime.strftime(updatedDateTimeObj, '%H:%M:%S')
+    updatedTraderTime = int(traderTimeSecondsTotal + diffTime)
+    traderTime = "{:0>8}".format(str(timedelta(seconds=updatedTraderTime)))
+
+    return traderTime
 
 
 def createDriverObj():
@@ -115,10 +125,10 @@ def getTraderInfo(traderNames, traderTimers):
         if item == "right now" or item[0].isdigit():
             traderTimersClean.append(item)
 
-    traderTuples = []
-
     for i, item in enumerate(traderNames):
         traderTuples.append((item, traderTimersClean[i]))
+
+    print(traderTuples)
 
     return traderTuples
 
