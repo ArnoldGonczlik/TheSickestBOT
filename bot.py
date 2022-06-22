@@ -20,6 +20,9 @@ prefix = botConfig['prefix']
 initial_channels = botConfig['initial_channels']
 token = botConfig['token']
 
+traderTuples = []
+startTime = time.time()
+
 bot = commands.Bot(
     irc_token=irc_token,
     client_id=client_id,
@@ -38,13 +41,18 @@ async def ping(ctx):
 @routines.routine(minutes=5)
 async def getValues():
     traderTuples = getTupleListOfTrader()
-    fetchTime = time.time()
+    startTime = time.time()
 
 
 @bot.command(name='traders')
-async def traders(ctx):
+async def traders(ctx, trader=None):
     for item in traderTuples:
-        await ctx.send(f'{item[0]}: {item[1]}')
+        if trader:
+            if item[0] == trader:
+                await ctx.send(f'{item[0]}: {item[1]}')
+        else:
+            await ctx.send(f'{item[0]}: {item[1]}')
+
     traderTuples = getTupleListOfTrader()
 
 
