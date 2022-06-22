@@ -30,7 +30,6 @@ async def test(ctx):
     traderTuples = getTupleListOfTrader()
     for item in traderTuples:
         await ctx.send(f'{item[0]}: {item[1]}')
-    time.sleep(5)
 
 @bot.command(name='argTest')
 async def argTest(ctx, args=None):
