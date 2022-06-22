@@ -87,7 +87,10 @@ def traderTimeReCalculate(traderTime):
     diffTime = currentTime - startTime
     startTime = time.time()
 
-    updatedTraderTime = int(traderTimeSecondsTotal + diffTime)
+    updatedTraderTime = int(traderTimeSecondsTotal - diffTime)
+    if updatedTraderTime <= 0:
+        return 'right now'
+        
     traderTime = "{:0>8}".format(str(timedelta(seconds=updatedTraderTime)))
 
     return traderTime
