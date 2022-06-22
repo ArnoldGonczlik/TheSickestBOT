@@ -40,14 +40,12 @@ async def getValues():
     traderTuples = getTupleListOfTrader()
     fetchTime = time.time()
 
-    print("I JUST RAN")
-
 
 @bot.command(name='traders')
 async def traders(ctx):
-    traderTuples = getTupleListOfTrader()
     for item in traderTuples:
         await ctx.send(f'{item[0]}: {item[1]}')
+    traderTuples = getTupleListOfTrader()
 
 
 def createDriverObj():
@@ -87,8 +85,6 @@ def getTraderInfo(traderNames, traderTimers):
     for i, item in enumerate(traderNames):
         traderTuples.append((item, traderTimersClean[i]))
 
-    print("Fetching complete")
-
     return traderTuples
 
 
@@ -106,7 +102,7 @@ def getTupleListOfTrader():
 
 
 if __name__ == "__main__":
-    bot.run()
+    getValues.start()
 
-    traderTuples = getTupleListOfTrader()
-    fetchTime = time.time()
+    print("Starting bot now")
+    bot.run()
