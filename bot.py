@@ -10,6 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 @routines.routine(minutes=5)
 async def getValues():
     traderTuples = getTupleListOfTrader()
+    fetchTime = time.now()
 
 
 @bot.command(name='traders')
@@ -17,14 +18,6 @@ async def test(ctx):
     traderTuples = getTupleListOfTrader()
     for item in traderTuples:
         await ctx.send(f'{item[0]}: {item[1]}')
-
-
-@bot.command(name='argTest')
-async def argTest(ctx, args=None):
-    if args == 'a':
-        await ctx.send('You successfully used the \'a\' parameter')
-    if args == 'b':
-        await ctx.send('You successfully used the \'b\' parameter')
 
 
 def createDriverObj():
@@ -84,6 +77,7 @@ if __name__ == "__main__":
         botConfig = json.load(json_file)
         
     traderTuples = getTupleListOfTrader()
+    fetchTime = time.now()
 
     #env
     irc_token        = botConfig['irc_token']
