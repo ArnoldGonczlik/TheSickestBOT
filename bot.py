@@ -30,6 +30,11 @@ bot = commands.Bot(
 )
 
 
+@bot.command(name='ping')
+async def ping(ctx):
+    await ctx.send("Pong")
+
+
 @routines.routine(minutes=1)
 async def getValues():
     traderTuples = getTupleListOfTrader()
@@ -39,7 +44,7 @@ async def getValues():
 
 
 @bot.command(name='traders')
-async def test(ctx):
+async def traders(ctx):
     traderTuples = getTupleListOfTrader()
     for item in traderTuples:
         await ctx.send(f'{item[0]}: {item[1]}')
@@ -69,7 +74,7 @@ def getAndParse(driver, url):
     return tree
 
 
-def getTraderInfo(tree, traderNames, traderTimers):
+def getTraderInfo(traderNames, traderTimers):
 
     traderTimersClean = []
 
@@ -82,6 +87,8 @@ def getTraderInfo(tree, traderNames, traderTimers):
     for i, item in enumerate(traderNames):
         traderTuples.append((item, traderTimersClean[i]))
 
+    print("Fetching complete")
+
     return traderTuples
 
 
@@ -91,7 +98,7 @@ def getTupleListOfTrader():
     tree = getAndParse(driver, url)
     traderNames = tree.xpath('//p[@class="chakra-text css-dqrf28"]/text()')
     traderTimers = tree.xpath('//p[@class="chakra-text css-1mnskd6"]/text()')
-    traderTuples = getTraderInfo(tree, traderNames, traderTimers)
+    traderTuples = getTraderInfo(traderNames, traderTimers)
 
     driver.quit()
 
@@ -99,7 +106,7 @@ def getTupleListOfTrader():
 
 
 if __name__ == "__main__":
+    bot.run()
+
     traderTuples = getTupleListOfTrader()
     fetchTime = time.time()
-
-    bot.run()
