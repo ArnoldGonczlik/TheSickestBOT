@@ -35,7 +35,7 @@ async def ping(ctx):
     await ctx.send("Pong")
 
 
-@routines.routine(minutes=1)
+@routines.routine(minutes=5)
 async def getValues():
     traderTuples = getTupleListOfTrader()
     fetchTime = time.time()
