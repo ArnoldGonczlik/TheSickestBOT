@@ -45,12 +45,14 @@ async def getValues():
 
 
 @bot.command(name='traders')
-async def traders(ctx, trader=None):
-    for item in traderTuples:
-        if trader:
-            if item[0] == trader:
-                await ctx.send(f'{item[0]}: {item[1]}')
-        else:
+async def test(ctx, trader=None):
+    if trader != None:
+        for item in traderTuples:
+            if item[0] == trader.lower():
+                await ctx.send(f'{item[0].capitalize()}: {item[1]}')
+
+    if trader == None:
+        for item in traderTuples:
             await ctx.send(f'{item[0]}: {item[1]}')
 
     traderTuples = getTupleListOfTrader()
