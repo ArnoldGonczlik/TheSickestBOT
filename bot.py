@@ -12,13 +12,14 @@ from webdriver_manager.chrome import ChromeDriverManager
 with open('botConfig.json') as json_file:
     botConfig = json.load(json_file)
 
-# env
-irc_token = botConfig['irc_token']
-client_id = botConfig['client_id']
-nick = botConfig['nick']
-prefix = botConfig['prefix']
-initial_channels = botConfig['initial_channels']
-token = botConfig['token']
+
+#env
+irc_token=botConfig['irc_token']
+client_id=botConfig['client_id']
+nick=botConfig['nick']
+prefix=botConfig['prefix']
+initial_channels=botConfig['initial_channels']
+token=botConfig['token']
 
 bot = commands.Bot(
     irc_token=irc_token,
