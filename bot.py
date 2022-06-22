@@ -2,6 +2,7 @@
 
 import json
 import time
+from datetime import datetime, timedelta
 
 from twitchio.ext import commands, routines
 from lxml import html
@@ -64,6 +65,22 @@ async def help(ctx):
     emailArn = 'me@arnoldg.no'
     emailX3l = 'me@x3l51.com'
     await ctx.send(f'Contact us at {emailArn} / {emailX3l}')
+
+
+def traderTimeReCalculate(traderTime):
+    if traderTime.lower() == 'right now':
+        return 'Right Now'
+
+    times = traderTime
+    timesDateTimeObj = datetime.strptime(times, '%H:%M:%S')
+    traderTimeInDateTime = timesDateTimeObj + timedelta(days=25567)
+    traderTimeInEpoch = time.mktime(datetime.timetuple(traderTimeInDateTime))
+
+    end = time.time()
+    diff = end - startTime
+    updatedDateTimeObj = datetime.fromtimestamp(traderTimeInEpoch - diff)
+
+    return datetime.strftime(updatedDateTimeObj, '%H:%M:%S')
 
 
 def createDriverObj():
