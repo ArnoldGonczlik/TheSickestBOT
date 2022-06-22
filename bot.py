@@ -48,6 +48,13 @@ async def traders(ctx):
     traderTuples = getTupleListOfTrader()
 
 
+@bot.command(name='help')
+async def help(ctx):
+    emailArn = 'me@arnoldg.no'
+    emailX3l = 'me@x3l51.com'
+    await ctx.send(f'Contact us at {emailArn} / {emailX3l}')
+
+
 def createDriverObj():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
