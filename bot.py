@@ -49,7 +49,7 @@ async def getValues():
 
 
 @bot.command(name='traders')
-async def test(ctx, trader=None):
+async def traders(ctx, trader=None):
     global traderTuples
     if trader:
         for item in traderTuples:
@@ -59,6 +59,18 @@ async def test(ctx, trader=None):
                 await ctx.send(f'{traderName}: {traderTimer}')
     else:
         for item in traderTuples:
+            traderName = item[0].capitalize()
+            traderTimer = traderTimeReCalculate(item[1])
+            await ctx.send(f'{traderName}: {traderTimer}')
+
+    traderTuples = getTupleListOfTrader()
+
+
+@bot.command(name='keycards')
+async def keycards(ctx):
+    global traderTuples
+    for item in traderTuples:
+        if item[0] in ("therapist", "mechanic"):
             traderName = item[0].capitalize()
             traderTimer = traderTimeReCalculate(item[1])
             await ctx.send(f'{traderName}: {traderTimer}')
@@ -90,7 +102,7 @@ def traderTimeReCalculate(traderTime):
     updatedTraderTime = int(traderTimeSecondsTotal - diffTime)
     if updatedTraderTime <= 0:
         return 'right now'
-        
+    
     traderTime = "{:0>8}".format(str(timedelta(seconds=updatedTraderTime)))
 
     return traderTime
@@ -127,6 +139,8 @@ def getTraderInfo(traderNames, traderTimers):
     for item in traderTimers:
         if item == "right now" or item[0].isdigit():
             traderTimersClean.append(item)
+
+    traderTuples = []
 
     for i, item in enumerate(traderNames):
         traderTuples.append((item, traderTimersClean[i]))
