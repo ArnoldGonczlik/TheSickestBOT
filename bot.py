@@ -69,11 +69,10 @@ async def traders(ctx, trader=None):
 @bot.command(name='keycards')
 async def keycards(ctx):
     global traderTuples
-    for item in traderTuples:
-        if item[0] in ("therapist", "mechanic"):
-            traderName = item[0].capitalize()
-            traderTimer = traderTimeReCalculate(item[1])
-            await ctx.send(f'{traderName}: {traderTimer}')
+
+    keycardTraderList = [x for x in traderTuples if x[0] in ("therapist", "mechanic")]
+    message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
+    await ctx.send(message)
 
     traderTuples = getTupleListOfTrader()
 
