@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import time
 
@@ -7,10 +9,33 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-@routines.routine(minutes=5)
+with open('botConfig.json') as json_file:
+    botConfig = json.load(json_file)
+
+# env
+irc_token = botConfig['irc_token']
+client_id = botConfig['client_id']
+nick = botConfig['nick']
+prefix = botConfig['prefix']
+initial_channels = botConfig['initial_channels']
+token = botConfig['token']
+
+bot = commands.Bot(
+    irc_token=irc_token,
+    client_id=client_id,
+    nick=nick,
+    prefix=prefix,
+    initial_channels=initial_channels,
+    token=token
+)
+
+
+@routines.routine(minutes=1)
 async def getValues():
     traderTuples = getTupleListOfTrader()
-    fetchTime = time.now()
+    fetchTime = time.time()
+
+    print("I JUST RAN")
 
 
 @bot.command(name='traders')
@@ -27,8 +52,8 @@ def createDriverObj():
     driver = webdriver.Chrome(
         chrome_options=options,
         executable_path=ChromeDriverManager().install()
-        )
-    
+    )
+
     return driver
 
 
@@ -61,40 +86,20 @@ def getTraderInfo(tree, traderNames, traderTimers):
 
 
 def getTupleListOfTrader():
-    url             = "https://eft-ammo.com/traders-reset-timers"
-    driver          = createDriverObj()
-    tree            = getAndParse(driver, url)
-    traderNames     = tree.xpath('//p[@class="chakra-text css-dqrf28"]/text()')
-    traderTimers    = tree.xpath('//p[@class="chakra-text css-1mnskd6"]/text()')
-    traderTuples    = getTraderInfo(tree,traderNames, traderTimers)
+    url = "https://eft-ammo.com/traders-reset-timers"
+    driver = createDriverObj()
+    tree = getAndParse(driver, url)
+    traderNames = tree.xpath('//p[@class="chakra-text css-dqrf28"]/text()')
+    traderTimers = tree.xpath('//p[@class="chakra-text css-1mnskd6"]/text()')
+    traderTuples = getTraderInfo(tree, traderNames, traderTimers)
 
     driver.quit()
 
     return traderTuples
 
+
 if __name__ == "__main__":
-    with open('TheSickestBOT/botConfig.json') as json_file:
-        botConfig = json.load(json_file)
-        
     traderTuples = getTupleListOfTrader()
-    fetchTime = time.now()
+    fetchTime = time.time()
 
-    #env
-    irc_token        = botConfig['irc_token']
-    client_id        = botConfig['client_id']
-    nick             = botConfig['nick']
-    prefix           = botConfig['prefix']
-    initial_channels = botConfig['initial_channels']
-    token            = botConfig['token']
-
-    bot = commands.Bot(
-        irc_token=irc_token,
-        client_id=client_id,
-        nick=nick,
-        prefix=prefix,
-        initial_channels=initial_channels,
-        token=token
-    )
-    
     bot.run()
-    
