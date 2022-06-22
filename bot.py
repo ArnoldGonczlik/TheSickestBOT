@@ -1,29 +1,16 @@
-from twitchio.ext import commands
 import json
 import time
+
+from twitchio.ext import commands, routines
 from lxml import html
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-with open('TheSickestBOT/botConfig.json') as json_file:
-    botConfig = json.load(json_file)
 
-#env
-irc_token=botConfig['irc_token']
-client_id=botConfig['client_id']
-nick=botConfig['nick']
-prefix=botConfig['prefix']
-initial_channels=botConfig['initial_channels']
-token=botConfig['token']
+@routines.routine(minutes=5)
+async def getValues():
+    traderTuples = getTupleListOfTrader()
 
-bot = commands.Bot(
-    irc_token=irc_token,
-    client_id=client_id,
-    nick=nick,
-    prefix=prefix,
-    initial_channels=initial_channels,
-    token=token
-)
 
 @bot.command(name='traders')
 async def test(ctx):
@@ -31,12 +18,14 @@ async def test(ctx):
     for item in traderTuples:
         await ctx.send(f'{item[0]}: {item[1]}')
 
+
 @bot.command(name='argTest')
 async def argTest(ctx, args=None):
     if args == 'a':
         await ctx.send('You successfully used the \'a\' parameter')
     if args == 'b':
         await ctx.send('You successfully used the \'b\' parameter')
+
 
 def createDriverObj():
     options = webdriver.ChromeOptions()
@@ -91,4 +80,27 @@ def getTupleListOfTrader():
     return traderTuples
 
 if __name__ == "__main__":
+    with open('TheSickestBOT/botConfig.json') as json_file:
+        botConfig = json.load(json_file)
+        
+    traderTuples = getTupleListOfTrader()
+
+    #env
+    irc_token        = botConfig['irc_token']
+    client_id        = botConfig['client_id']
+    nick             = botConfig['nick']
+    prefix           = botConfig['prefix']
+    initial_channels = botConfig['initial_channels']
+    token            = botConfig['token']
+
+    bot = commands.Bot(
+        irc_token=irc_token,
+        client_id=client_id,
+        nick=nick,
+        prefix=prefix,
+        initial_channels=initial_channels,
+        token=token
+    )
+    
     bot.run()
+    
