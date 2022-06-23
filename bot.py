@@ -66,9 +66,9 @@ async def getValues():
                 reminderSent = False
                 #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
                 for item in keycardTraderList:
-                    if item[1] == "right now" or item[1](":")[1] <= getValueRoutineInterval:
+                    if item[1] == "right now" or int(int(item[1].split(":")[0])*60)+int(item[1].split(":")[1]) <= getValueRoutineInterval:
                         message = f'REMINDER: {item[0].capitalize()}: {item[1]}'
-                        print(f'Message: {message}')
+                        print(f'Message to {channel}: {message}')
                         await channel.send(message)
                         reminderSent = True
                 if reminderSent or int(reminder[1]) < 1:
@@ -164,7 +164,7 @@ def traderTimeReCalculate(traderTime):
     diffTime = currentTime - startTime
     startTime = time.time()
 
-    updatedTraderTime = int(traderTimeSecondsTotal - diffTime)
+    updatedTraderTime = int(traderTimeSecondsTotal + diffTime)
     if updatedTraderTime <= 0:
         return 'right now'
     
