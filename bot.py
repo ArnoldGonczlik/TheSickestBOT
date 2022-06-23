@@ -5,6 +5,7 @@ import time
 from datetime import timedelta
 
 from twitchio.ext import commands, routines
+import twitchio
 from lxml import html
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -23,6 +24,7 @@ initial_channels=botConfig['initial_channels']
 token=botConfig['token']
 
 traderTuples = []
+traderReminder = []
 startTime = time.time()
 
 bot = commands.Bot(
@@ -40,12 +42,21 @@ async def ping(ctx):
     await ctx.send("Pong")
 
 
-@routines.routine(minutes=5)
+@routines.routine(minutes=2)
 async def getValues():
     global traderTuples
     traderTuples = getTupleListOfTrader()
     global startTime
     startTime = time.time()
+    global traderReminder
+    for reminder in traderReminder:
+        for channel in bot.connected_channels:
+            if channel.name == reminder[0]:
+                keycardTraderList = keycardsStr()
+                #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
+                for item in keycardTraderList:
+                    if item[1] == "right now":
+                        await channel.send(f'REMINDER: {item[0].capitalize()}: {item[1]}')
 
 
 @bot.command(name='traders')
@@ -68,16 +79,31 @@ async def traders(ctx, trader=None):
 
 
 @bot.command(name='keycards')
-async def keycards(ctx):
+async def keycards(ctx, reminder=None, reminderAmount=None):
     print(f'{ctx.author.name} used "{prefix}keycards" in {ctx.message.channel}')
+    global traderReminder
+    if reminder:
+        if not reminderAmount:
+            reminderAmount = 1
+        traderReminder.append((ctx.message.channel.name, reminderAmount))
+        await ctx.send(f'Reminder set!')
+        return
+
+    keycardTraderList = keycardsStr()
+    #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
+    for item in keycardTraderList:
+        await ctx.send(f'{item[0].capitalize()}: {item[1]}')
+
+
+def keycardsStr(): 
     global traderTuples
     if not traderTuples:
         traderTuples = getTupleListOfTrader()
 
     keycardTraderList = [x for x in traderTuples if x[0] in ("therapist", "mechanic")]
-    #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
-    for item in keycardTraderList:
-        await ctx.send(f'{item[0].capitalize()}: {item[1]}')
+
+    return keycardTraderList
+
 
 
 @bot.command(name='help')
