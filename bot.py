@@ -42,14 +42,14 @@ async def ping(ctx):
     await ctx.send("Pong")
 
 
-@routines.routine(minutes=2)
+@routines.routine(minutes=5)
 async def getValues():
     global traderTuples
     traderTuples = getTupleListOfTrader()
     global startTime
     startTime = time.time()
     global traderReminder
-    for reminder in traderReminder:
+    for i, reminder in enumerate(traderReminder):
         for channel in bot.connected_channels:
             if channel.name == reminder[0]:
                 keycardTraderList = keycardsStr()
@@ -57,6 +57,11 @@ async def getValues():
                 for item in keycardTraderList:
                     if item[1] == "right now":
                         await channel.send(f'REMINDER: {item[0].capitalize()}: {item[1]}')
+                        reminderSent = True
+                if reminderSent or int(reminder[1]) < 1:
+                    if int(reminder[1]) >= 1:
+                        traderReminder.append((reminder[0], int(reminder[1]) - 1))
+                    traderReminder.pop(i)
 
 
 @bot.command(name='traders')
@@ -82,11 +87,17 @@ async def traders(ctx, trader=None):
 async def keycards(ctx, reminder=None, reminderAmount=None):
     print(f'{ctx.author.name} used "{prefix}keycards" in {ctx.message.channel}')
     global traderReminder
+    # CHeck if channel alreayy in there
     if reminder:
         if not reminderAmount:
             reminderAmount = 1
-        traderReminder.append((ctx.message.channel.name, reminderAmount))
-        await ctx.send(f'Reminder set!')
+        if [x for x in traderReminder if x[0] == ctx.message.channel.name]:
+            for i, reminder in enumerate(traderReminder):
+                if reminder[0] == ctx.message.channel.name:
+                    traderReminder.pop(i)
+        if int(reminderAmount) > 0:
+            traderReminder.append((ctx.message.channel.name, int(reminderAmount)))
+            await ctx.send(f'Reminder set!')
         return
 
     keycardTraderList = keycardsStr()
