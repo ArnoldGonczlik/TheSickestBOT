@@ -71,8 +71,9 @@ async def keycards(ctx):
     global traderTuples
 
     keycardTraderList = [x for x in traderTuples if x[0] in ("therapist", "mechanic")]
-    message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
-    await ctx.send(message)
+    #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
+    for item in keycardTraderList:
+        await ctx.send(f'{item[0].capitalize()}: {item[1]}')
 
     traderTuples = getTupleListOfTrader()
 
