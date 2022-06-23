@@ -27,6 +27,8 @@ traderTuples = []
 traderReminder = []
 startTime = time.time()
 
+commandCooldown = 30
+
 bot = commands.Bot(
     irc_token=irc_token,
     client_id=client_id,
@@ -38,6 +40,7 @@ bot = commands.Bot(
 
 
 @bot.command(name='ping')
+@commands.cooldown(1,commandCooldown,commands.Bucket.user)
 async def ping(ctx):
     await ctx.send("Pong")
 
@@ -65,6 +68,7 @@ async def getValues():
 
 
 @bot.command(name='traders')
+@commands.cooldown(1,commandCooldown,commands.Bucket.user)
 async def traders(ctx, trader=None):
     print(f'{ctx.author.name} used "{prefix}traders {trader}" in {ctx.message.channel}')
     global traderTuples
@@ -84,6 +88,7 @@ async def traders(ctx, trader=None):
 
 
 @bot.command(name='keycards')
+@commands.cooldown(1,commandCooldown,commands.Bucket.user)
 async def keycards(ctx, reminder=None, reminderAmount=None):
     print(f'{ctx.author.name} used "{prefix}keycards" in {ctx.message.channel}')
     global traderReminder
