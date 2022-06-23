@@ -92,17 +92,17 @@ async def traders(ctx, trader=None):
 async def keycards(ctx, reminder=None, reminderAmount=None):
     print(f'{ctx.author.name} used "{prefix}keycards" in {ctx.message.channel}')
     global traderReminder
-    # CHeck if channel alreayy in there
     if reminder:
-        if not reminderAmount:
-            reminderAmount = 1
-        if [x for x in traderReminder if x[0] == ctx.message.channel.name]:
-            for i, reminder in enumerate(traderReminder):
-                if reminder[0] == ctx.message.channel.name:
-                    traderReminder.pop(i)
-        if int(reminderAmount) > 0:
-            traderReminder.append((ctx.message.channel.name, int(reminderAmount)))
-            await ctx.send(f'Reminder set!')
+        if ctx.author.is_mod:
+            if not reminderAmount:
+                reminderAmount = 1
+            if [x for x in traderReminder if x[0] == ctx.message.channel.name]:
+                for i, reminder in enumerate(traderReminder):
+                    if reminder[0] == ctx.message.channel.name:
+                        traderReminder.pop(i)
+            if int(reminderAmount) > 0:
+                traderReminder.append((ctx.message.channel.name, int(reminderAmount)))
+                await ctx.send(f'Reminder set!')
         return
 
     keycardTraderList = keycardsStr()
