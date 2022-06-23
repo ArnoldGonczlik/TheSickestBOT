@@ -124,7 +124,9 @@ async def keycards(ctx, reminder=None, reminderAmount=None):
     keycardTraderList = keycardsStr()
     #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
     for item in keycardTraderList:
-        message = f'{item[0].capitalize()}: {item[1]}'
+        traderName = item[0].capitalize()
+        traderTimer = traderTimeReCalculate(item[1])
+        message = f'{traderName}: {traderTimer}'
         print(f'Message: {message}')
         await ctx.send(message)
 
@@ -162,9 +164,8 @@ def traderTimeReCalculate(traderTime):
     currentTime = time.time()
     global startTime
     diffTime = currentTime - startTime
-    startTime = time.time()
 
-    updatedTraderTime = int(traderTimeSecondsTotal + diffTime)
+    updatedTraderTime = int(traderTimeSecondsTotal - diffTime)
     if updatedTraderTime <= 0:
         return 'right now'
     
