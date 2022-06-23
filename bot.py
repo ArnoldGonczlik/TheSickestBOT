@@ -44,26 +44,32 @@ bot = commands.Bot(
 @bot.command(name='ping')
 @commands.cooldown(commandCooldownRate,commandCooldown,commands.Bucket.user)
 async def ping(ctx):
-    await ctx.send("Pong")
+    message = "Pong"
+    print(f'Message: {message}')
+    await ctx.send(message)
 
 
 @routines.routine(minutes=getValueRoutineInterval)
 async def getValues():
     global traderTuples
     traderTuples = getTupleListOfTrader()
+    print(f'Trader Tuples: {traderTuples}')
     global startTime
     startTime = time.time()
     global traderReminder
+    print(f'Connected to: {bot.connected_channels}')
+    print(f'Reminders for: {traderReminder}')
     for i, reminder in enumerate(traderReminder):
         for channel in bot.connected_channels:
-            print(f'Connected to: {channel.name}')
             if channel.name == reminder[0]:
                 keycardTraderList = keycardsStr()
                 reminderSent = False
                 #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
                 for item in keycardTraderList:
                     if item[1] == "right now" or item[1](":")[1] <= getValueRoutineInterval:
-                        await channel.send(f'REMINDER: {item[0].capitalize()}: {item[1]}')
+                        message = f'REMINDER: {item[0].capitalize()}: {item[1]}'
+                        print(f'Message: {message}')
+                        await channel.send(message)
                         reminderSent = True
                 if reminderSent or int(reminder[1]) < 1:
                     if int(reminder[1]) >= 1:
@@ -83,12 +89,16 @@ async def traders(ctx, trader=None):
             if item[0] == trader.lower():
                 traderName = item[0].capitalize()
                 traderTimer = traderTimeReCalculate(item[1])
-                await ctx.send(f'{traderName}: {traderTimer}')
+                message = f'{traderName}: {traderTimer}'
+                print(f'Message: {message}')
+                await ctx.send(message)
     else:
         for item in traderTuples:
             traderName = item[0].capitalize()
             traderTimer = traderTimeReCalculate(item[1])
-            await ctx.send(f'{traderName}: {traderTimer}')
+            message = f'{traderName}: {traderTimer}'
+            print(f'Message: {message}')
+            await ctx.send(message)
 
 
 @bot.command(name='keycards')
@@ -106,13 +116,17 @@ async def keycards(ctx, reminder=None, reminderAmount=None):
                         traderReminder.pop(i)
             if int(reminderAmount) > 0:
                 traderReminder.append((ctx.message.channel.name, int(reminderAmount)))
-                await ctx.send(f'Reminder set!')
+                message = f'Reminder set!'
+                print(f'Message: {message}')
+                await ctx.send(message)
         return
 
     keycardTraderList = keycardsStr()
     #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
     for item in keycardTraderList:
-        await ctx.send(f'{item[0].capitalize()}: {item[1]}')
+        message = f'{item[0].capitalize()}: {item[1]}'
+        print(f'Message: {message}')
+        await ctx.send(message)
 
 
 def keycardsStr(): 
@@ -131,7 +145,9 @@ async def help(ctx):
     print(f'{ctx.author.name} used "{prefix}help" in {ctx.message.channel}')
     emailArn = 'me@arnoldg.no'
     emailX3l = 'me@x3l51.com'
-    await ctx.send(f'Contact us at {emailArn} / {emailX3l}')
+    message = f'Contact us at {emailArn} / {emailX3l}'
+    print(f'Message: {message}')
+    await ctx.send(message)
 
 
 def traderTimeReCalculate(traderTime):
