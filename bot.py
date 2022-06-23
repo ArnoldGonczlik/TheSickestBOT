@@ -60,10 +60,10 @@ async def getValues():
     print(f'Connected to: {bot.connected_channels}')
     print(f'Reminders for: {traderReminder}')
     for i, reminder in enumerate(traderReminder):
+        reminderSent = False
         for channel in bot.connected_channels:
             if channel.name == reminder[0]:
                 keycardTraderList = keycardsStr()
-                reminderSent = False
                 #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
                 for item in keycardTraderList:
                     if item[1] == "right now" or int(int(item[1].split(":")[0])*60)+int(item[1].split(":")[1]) <= getValueRoutineInterval:
@@ -73,7 +73,7 @@ async def getValues():
                         reminderSent = True
                 if reminderSent or int(reminder[1]) < 1:
                     if int(reminder[1]) >= 1:
-                        traderReminder.append((reminder[0], int(reminder[1]) - 1))
+                        traderReminder.insert(i, (reminder[0], int(reminder[1]) - 1))
                     traderReminder.pop(i)
 
 
