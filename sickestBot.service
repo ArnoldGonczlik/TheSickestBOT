@@ -1,0 +1,22 @@
+[Unit]
+Description=sickestBot
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/usr/bin/python3 /home/<username>/test.py
+
+[Install]
+WantedBy=multi-user.target
+
+
+# This file goes into /usr/bin/python3 /home/<username>/test.py
+
+# To start the service
+# sudo systemctl start sickestBot.service
+
+# To enable the service
+# sudo systemctl enable sickestBot.service
