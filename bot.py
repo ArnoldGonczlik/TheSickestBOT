@@ -50,7 +50,10 @@ async def getValues():
 
 @bot.command(name='traders')
 async def traders(ctx, trader=None):
+    print(f'{ctx.author.name} used "{prefix}traders {trader}" in {ctx.message.channel}')
     global traderTuples
+    if not traderTuples:
+        traderTuples = getTupleListOfTrader()
     if trader:
         for item in traderTuples:
             if item[0] == trader.lower():
@@ -68,7 +71,10 @@ async def traders(ctx, trader=None):
 
 @bot.command(name='keycards')
 async def keycards(ctx):
+    print(f'{ctx.author.name} used "{prefix}keycards" in {ctx.message.channel}')
     global traderTuples
+    if not traderTuples:
+        traderTuples = getTupleListOfTrader()
 
     keycardTraderList = [x for x in traderTuples if x[0] in ("therapist", "mechanic")]
     #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
@@ -80,6 +86,7 @@ async def keycards(ctx):
 
 @bot.command(name='help')
 async def help(ctx):
+    print(f'{ctx.author.name} used "{prefix}help" in {ctx.message.channel}')
     emailArn = 'me@arnoldg.no'
     emailX3l = 'me@x3l51.com'
     await ctx.send(f'Contact us at {emailArn} / {emailX3l}')
@@ -144,8 +151,6 @@ def getTraderInfo(traderNames, traderTimers):
 
     for i, item in enumerate(traderNames):
         traderTuples.append((item, traderTimersClean[i]))
-
-    print(traderTuples)
 
     return traderTuples
 
