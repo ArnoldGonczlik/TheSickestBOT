@@ -27,7 +27,9 @@ traderTuples = []
 traderReminder = []
 startTime = time.time()
 
+getValueRoutineInterval = 5
 commandCooldown = 30
+commandCooldownRate = 4
 
 bot = commands.Bot(
     irc_token=irc_token,
@@ -40,12 +42,12 @@ bot = commands.Bot(
 
 
 @bot.command(name='ping')
-@commands.cooldown(1,commandCooldown,commands.Bucket.user)
+@commands.cooldown(commandCooldownRate,commandCooldown,commands.Bucket.user)
 async def ping(ctx):
     await ctx.send("Pong")
 
 
-@routines.routine(minutes=5)
+@routines.routine(minutes=getValueRoutineInterval)
 async def getValues():
     global traderTuples
     traderTuples = getTupleListOfTrader()
@@ -54,11 +56,13 @@ async def getValues():
     global traderReminder
     for i, reminder in enumerate(traderReminder):
         for channel in bot.connected_channels:
+            print(f'Connected to: {channel.name}')
             if channel.name == reminder[0]:
                 keycardTraderList = keycardsStr()
+                reminderSent = False
                 #message = f'{keycardTraderList[0][0].capitalize()}: {keycardTraderList[0][1]}, {keycardTraderList[1][0].capitalize()}: {keycardTraderList[1][1]}'
                 for item in keycardTraderList:
-                    if item[1] == "right now":
+                    if item[1] == "right now" or item[1](":")[1] <= getValueRoutineInterval:
                         await channel.send(f'REMINDER: {item[0].capitalize()}: {item[1]}')
                         reminderSent = True
                 if reminderSent or int(reminder[1]) < 1:
@@ -68,7 +72,7 @@ async def getValues():
 
 
 @bot.command(name='traders')
-@commands.cooldown(1,commandCooldown,commands.Bucket.user)
+@commands.cooldown(commandCooldownRate,commandCooldown,commands.Bucket.user)
 async def traders(ctx, trader=None):
     print(f'{ctx.author.name} used "{prefix}traders {trader}" in {ctx.message.channel}')
     global traderTuples
@@ -88,7 +92,7 @@ async def traders(ctx, trader=None):
 
 
 @bot.command(name='keycards')
-@commands.cooldown(1,commandCooldown,commands.Bucket.user)
+@commands.cooldown(commandCooldownRate,commandCooldown,commands.Bucket.user)
 async def keycards(ctx, reminder=None, reminderAmount=None):
     print(f'{ctx.author.name} used "{prefix}keycards" in {ctx.message.channel}')
     global traderReminder
