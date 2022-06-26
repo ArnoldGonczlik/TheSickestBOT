@@ -5,7 +5,6 @@ import time
 from datetime import timedelta
 
 from twitchio.ext import commands, routines
-import twitchio
 from lxml import html
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
