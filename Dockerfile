@@ -1,6 +1,6 @@
 FROM python
 
-WORKDIR /
+ADD requirements.txt .
 
 ADD bot.py .
 
